@@ -2,7 +2,7 @@ from get_vacancies import get_vacancies
 from connect_db import connect_database
 from vault import create_client, get_database_secrets
 from logger import logger
-import shedule
+import schedule
 import time
 
 is_running = False
