@@ -9,7 +9,7 @@ build-job:
   tags:
       - home-server
   script:
-    - echo "TEST 2"
+    - echo "TEST 3"
     - docker run -d --name zaza registry.gitlab.com/zeroking783/zazatappo-vacanzi
     - docker ps -a
 
