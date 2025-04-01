@@ -3,6 +3,9 @@ stages:
 
 build-job:
   stage: deploy
+  image: docker:24.0
+  services:
+    - docker:24.0-dind
   tags:
       - home-server
   script:
