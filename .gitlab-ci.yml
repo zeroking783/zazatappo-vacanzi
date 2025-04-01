@@ -8,5 +8,5 @@ build-job:
   tags:
       - home-server
   script:
-    - echo "--- TEST ---"
+    - echo "--- TEST 2 ---"
 
