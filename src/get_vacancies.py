@@ -5,6 +5,7 @@ from selenium.common.exceptions import NoSuchElementException
 import sys
 import uuid
 import time
+from logger import logger
 
 def get_vacancies():
     vacancies_dict = []
@@ -15,27 +16,66 @@ def get_vacancies():
         "ноября": "11", "декабря": "12"
     }
 
-    options = webdriver.FirefoxOptions()
-    driver = webdriver.Firefox(options=options)
+    try:
+        logger.debug(f"Создаю объект FirefoxOptions")
+        options = webdriver.FirefoxOptions()
+    except Exception as e:
+        logger.error(f"Ошибка создания объекта FirefoxOptions: {e}")
+        sys.exit(1)
+    
+    try:
+        logger.debug(f"Запускаю браузер")
+        driver = webdriver.Firefox(options=options)
+    except Exception as e:
+        logger.error(f"Ошибка запуска браузера: {e}")
+        sys.exit(1)
 
-    driver.get("https://rabota.sber.ru/search/?query=DevOps")
+    try:
+        logger.debug(f"Получаю страницу")
+        driver.get("https://rabota.sber.ru/search/?query=DevOps")
+    except Exception as e:
+        logger.error(f"Ошибка получения страницы: {e}")
+        sys.exit(1)
 
     scroll_pause_time = 2
+    max_retries = 5
 
     last_height = driver.execute_script("return document.body.scrollHeight")
+    retries = 0
 
-    while True:
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        
-        time.sleep(scroll_pause_time)
-        
-        new_height = driver.execute_script("return document.body.scrollHeight")
-        if new_height == last_height:
-            break 
-        last_height = new_height
-    
-    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-    vacancies = driver.find_elements(By.XPATH, "//div[contains(@class, 'styled__Card-sc-192d1yv-1 fmUtEX')]")
+    try:
+        logger.debug(f"Пролистываю сайт до конца")
+        while retries < max_retries:
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(scroll_pause_time)
+
+            try:
+                WebDriverWait(driver, scroll_pause_time).until(
+                    EC.presence_of_element_located(By.XPATH, "//div[contains(@class, 'styled__Card-sc-192d1yv-1 fmUtEX')]")
+                )
+            except:
+                pass
+
+            new_height = driver.execute_script("return document.body.scrollHeight")
+
+            if new_height == last_height:
+                retries += 1
+            else:
+                retries = 0
+
+            last_height = new_height
+    except Exception as e:
+        logger.error(f"Ошибка при пролистывании сайта до самого конца: {e}")
+        sys.exit(1)
+
+
+    try:
+        logger.debug(f"Получаю все элементы с вакансиями")
+        vacancies = driver.find_elements(By.XPATH, "//div[contains(@class, 'styled__Card-sc-192d1yv-1 fmUtEX')]")
+    except Exception as e:
+        logger.error(f"Ошибка получения всех вакансий: {e}")
+        sys.exit(1)
+
 
     for vacancy in vacancies:
         vacancy_dict = {
@@ -54,7 +94,7 @@ def get_vacancies():
             if name:
                 vacancy_dict["name"] = name
         except Exception as e:
-            print(f"Ошибка с парсингом имени вакансии: {e}")
+            logger.error(f"Ошибка с парсингом имени вакансии: {e}")
             sys.exit(1)
 
         try:
@@ -62,7 +102,7 @@ def get_vacancies():
             if subdivision:
                 vacancy_dict["subdivision"] = subdivision
         except Exception as e:
-            print(f"Ошибка с парсингом подразделения: {e}")
+            logger.error(f"Ошибка с парсингом подразделения: {e}")
             sys.exit(1)
         
         try:
@@ -74,7 +114,7 @@ def get_vacancies():
                 date_pub = date_pub_list[2] + "-" + month_num + "-" + date_pub_list[0]
                 vacancy_dict["date_pub"] = date_pub
         except Exception as e:
-            print(f"Ошибка с парсингом даты публикации вакансии: {e}")
+            logger.error(f"Ошибка с парсингом даты публикации вакансии: {e}")
             sys.exit(1)
 
         try:        
@@ -82,7 +122,7 @@ def get_vacancies():
             if sity:
                 vacancy_dict["sity"] = sity
         except Exception as e:
-            print(f"Ошибка с парсингом города работы: {e}")
+            logger.error(f"Ошибка с парсингом города работы: {e}")
             sys.exit(1)
 
         try:
@@ -90,7 +130,7 @@ def get_vacancies():
             if description:
                 vacancy_dict["description"] = description
         except Exception as e:
-            print(f"Ошибка с парсингом описания: {e}")
+            logger.error(f"Ошибка с парсингом описания: {e}")
             sys.exit(1)
 
         try:    
@@ -100,7 +140,7 @@ def get_vacancies():
         except NoSuchElementException:
             vacancy_dict["no_experience"] = False
         except Exception as e:
-            print(f"Ошибка с парсингом необходимости опыта: {e}")
+            logger.error(f"Ошибка с парсингом необходимости опыта: {e}")
             sys.exit(1)
         
         try:
@@ -110,10 +150,16 @@ def get_vacancies():
             if link:
                 vacancy_dict["link_num"] = link
         except Exception as e:
-            print(f"Ошибка с парсингом ссылки вакансии: {e}")
+            logger.error(f"Ошибка с парсингом ссылки вакансии: {e}")
             sys.exit(1)
 
         vacancies_dict.append(vacancy_dict)
 
-    driver.quit()
+    try:
+        logger.debug(f"Закрываю браузер")
+        driver.quit()
+    except Exception as e:
+        logger.error(f"Ошибка закрытия браузера")
+        sys.exit(1)
+
     return vacancies_dict

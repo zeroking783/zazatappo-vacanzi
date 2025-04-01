@@ -1,5 +1,5 @@
 .venv
 .git
 src/__pycache__
-src/connect_db.py
 parse.html
+token 
