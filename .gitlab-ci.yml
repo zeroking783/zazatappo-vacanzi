@@ -6,6 +6,6 @@ build-job:
   tags:
       - home-server
   script:
-    - docker run -d --name zaza registry.gitlab.com/zeroking783/zazatappo-vacanzi"
+    - docker run -d --name zaza registry.gitlab.com/zeroking783/zazatappo-vacanzi
     - docker ps -a
 
