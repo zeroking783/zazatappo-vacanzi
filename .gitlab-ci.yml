@@ -1,12 +1,11 @@
-image: python:3.9
-
 stages:
-  - test
+  - deploy
 
 build-job:
-  stage: test
+  stage: deploy
   tags:
       - home-server
   script:
-    - echo "--- TEST 2 ---"
+    - docker run -d --name zaza registry.gitlab.com/zeroking783/zazatappo-vacanzi"
+    - docker ps -a
 
