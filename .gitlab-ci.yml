@@ -9,7 +9,7 @@ build-job:
   tags:
       - home-server
   script:
-    - echo "DEPLOY ZAZA"
+    - echo "DEPLOY zaza"
     - |
       if docker ps -a --filter "name=zaza" --format '{{.Names}}' | grep zaza; then
         echo "DELETE ZAZA CONTAINER"
