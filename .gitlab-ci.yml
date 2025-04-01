@@ -9,8 +9,12 @@ build-job:
   tags:
       - home-server
   script:
-    - echo "TEST 3"
-    - docker ps -a
-    - docker run -d --name zaza registry.gitlab.com/zeroking783/zazatappo-vacanzi:execurot
+    - echo "DEPLOY zaza"
+    - |
+      if docker ps -a --filter "name=zaza" --format '{{.Names}}' | grep zaza; then
+        echo "DELETE zaza CONTAINER"
+        docker rm -f zaza;
+      fi
+    - docker run -d --name zaza --shm-size="2g" -e VAULT_TOKEN=$VAULT_TOKEN registry.gitlab.com/zeroking783/zazatappo-vacanzi:latest
     - docker ps -a
 
