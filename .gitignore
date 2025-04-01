@@ -1,5 +1,6 @@
 .venv
 .git
 src/__pycache__
+src/app.log
 parse.html
 token 
