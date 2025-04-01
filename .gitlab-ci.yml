@@ -1,6 +1,12 @@
+image: python:3.9
+
 stages:
   - test
 
-test:
+build-job:
+  stage: test
+  tags:
+      - home-server
   script:
-    - echo "GitLab Runner is working!"
+    - echo "--- TEST ---"
+
