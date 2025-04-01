@@ -10,8 +10,6 @@ build-job:
       - home-server
   script:
     - echo "TEST 3"
-    - docker ps -a 
-    - docker ps
     - docker run -d --name zaza registry.gitlab.com/zeroking783/zazatappo-vacanzi
     - docker ps -a
 
