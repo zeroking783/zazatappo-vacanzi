@@ -11,6 +11,6 @@ build-job:
   script:
     - echo "TEST 3"
     - docker ps -a
-    - docker run -d --name zaza registry.gitlab.com/zeroking783/zazatappo-vacanzi:latest
+    - docker run -d --name zaza registry.gitlab.com/zeroking783/zazatappo-vacanzi:execurot
     - docker ps -a
 
