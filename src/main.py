@@ -2,8 +2,19 @@ from get_vacancies import get_vacancies
 from connect_db import connect_database
 from vault import create_client, get_database_secrets
 from logger import logger
+import shedule
+import time
+
+is_running = False
 
 def main():
+    global is_running
+
+    if is_running:
+        logger.warning(f"Прошлый запуск не завершен, пропускаю текущий цикл")
+        return
+
+    is_running = True
 
     vacancies = get_vacancies()
     logger.debug(f"Найдено {len(vacancies)} вакансий")
@@ -73,5 +84,11 @@ def main():
     except Exception as e:
         logger.error(f"Ошибка закрытия cur и conn: {e}")
 
+    is_running = False
+
 if __name__ == '__main__':
-    main()
+    schedule.every(5).minutes.do(main)
+
+    while True:
+        schedule.run_pending()
+        time.sleep(5)
