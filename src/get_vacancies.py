@@ -1,4 +1,6 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
@@ -18,14 +20,18 @@ def get_vacancies():
 
     try:
         logger.debug(f"Создаю объект FirefoxOptions")
-        options = webdriver.FirefoxOptions()
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")  # Без GUI
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
     except Exception as e:
         logger.error(f"Ошибка создания объекта FirefoxOptions: {e}")
         sys.exit(1)
     
     try:
         logger.debug(f"Запускаю браузер")
-        driver = webdriver.Firefox(options=options)
+        service = Service("/usr/bin/chromedriver")
+        driver = webdriver.Chrome(service=service, options=chrome_options)
     except Exception as e:
         logger.error(f"Ошибка запуска браузера: {e}")
         sys.exit(1)
