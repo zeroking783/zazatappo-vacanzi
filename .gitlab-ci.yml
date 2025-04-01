@@ -10,6 +10,10 @@ build-job:
       - home-server
   script:
     - echo "DEPLOY zaza"
+    # - |
+    #   if docker images --filter "reference=registry.gitlab.com/zeroking783/zazatappo-vacanzi" | grep zazatappo-vacanzi; then
+    #     echo "DELETE ZAZA IMAGES"
+    - docker pull registry.gitlab.com/zeroking783/zazatappo-vacanzi:latest
     - |
       if docker ps -a --filter "name=zaza" --format '{{.Names}}' | grep zaza; then
         echo "DELETE ZAZA CONTAINER"
