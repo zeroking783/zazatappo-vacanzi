@@ -5,7 +5,7 @@ from colorama import init, Fore, Style
 init()
 
 logger = logging.getLogger('parse_vacancies')
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 
