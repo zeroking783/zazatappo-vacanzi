@@ -12,6 +12,7 @@ def main():
 
     if is_running:
         logger.warning(f"Прошлый запуск не завершен, пропускаю текущий цикл")
+        sys.exit(1)
         return
 
     is_running = True
