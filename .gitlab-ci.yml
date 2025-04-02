@@ -11,7 +11,7 @@ build-job:
     - home-server
   script:
     - echo "BUILD JOB"
-    - docker build -t registry.gitlab.com/zeroking783/zazatappo-vacanzi:latest src/Dockerfile
+    - docker build -t registry.gitlab.com/zeroking783/zazatappo-vacanzi:latest src/
     - docker push registry.gitlab.com/zeroking783/zazatappo-vacanzi:latest
     - docker images 
 
