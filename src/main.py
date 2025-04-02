@@ -17,8 +17,9 @@ def main():
 
     is_running = True
 
+    logger.info(f"Начинаю новый цикл")
+
     vacancies = get_vacancies()
-    logger.debug(f"Найдено {len(vacancies)} вакансий")
 
     client = create_client(url="https://vault.bakvivas.ru", token_name="VAULT_TOKEN", verify_path="/etc/ssl/certs/ca-certificates.crt")
 
@@ -79,7 +80,7 @@ def main():
                 sys.exit(1)
 
     try:
-        logger.debug(f"Закрываю cur и conn")
+        logger.info(f"Закрываю cur и conn")
         cur.close()
         conn.close()
     except Exception as e:
