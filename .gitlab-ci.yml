@@ -9,6 +9,9 @@ build-job:
     - docker:24.0-dind
   tags:
     - home-server
+  before_script:
+    - echo "LOGIN GITLAB REGISTRY"
+    - echo "$GITLAB_TOKEN" | docker login registry.gitlab.com -u zeroking783 --password-stdin
   script:
     - echo "BUILD JOB"
     - docker build -t registry.gitlab.com/zeroking783/zazatappo-vacanzi:latest src/
