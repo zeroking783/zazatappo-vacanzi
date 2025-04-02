@@ -23,4 +23,6 @@ def connect_database(database_secrets):
         logger.error(f"Ошибка создания объекта cursor: {e}")
         sys.exit(1)
 
+    logger.debug(f"Объекты для подключения к базе данных успешно созданы")
+
     return conn, cur
