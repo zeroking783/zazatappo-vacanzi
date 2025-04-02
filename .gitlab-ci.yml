@@ -16,7 +16,6 @@ build-job:
     - echo "BUILD JOB"  
     - docker build -t registry.gitlab.com/zeroking783/zazatappo-vacanzi:latest src/
     - docker push registry.gitlab.com/zeroking783/zazatappo-vacanzi:latest
-    - docker images 
 
 deploy-job:
   stage: deploy
@@ -34,5 +33,4 @@ deploy-job:
         docker rm -f zaza;
       fi
     - docker run -d --name zaza -e VAULT_TOKEN=$VAULT_TOKEN --shm-size="2g" registry.gitlab.com/zeroking783/zazatappo-vacanzi:latest
-    - docker ps -a
 
