@@ -10,7 +10,10 @@ import time
 from logger import logger
 
 def get_vacancies():
-    vacancies_dict = []
+
+    logger.debug(f"Начинаю парсинг вакансий с сайта")
+
+    vacancies_дшые = []
 
     month_mapping = {
         "января": "01", "февраля": "02", "марта": "03", "апреля": "04", "мая": "05",
@@ -159,7 +162,7 @@ def get_vacancies():
             logger.error(f"Ошибка с парсингом ссылки вакансии: {e}")
             sys.exit(1)
 
-        vacancies_dict.append(vacancy_dict)
+        vacancies_list.append(vacancy_dict)
 
     try:
         logger.debug(f"Закрываю браузер")
@@ -168,4 +171,6 @@ def get_vacancies():
         logger.error(f"Ошибка закрытия браузера")
         sys.exit(1)
 
-    return vacancies_dict
+    logger.debug(f"Найдено {len(vacancies_list)} вакансий")
+    logger.debug(f"Вакансии с сайта спаршены успешно")
+    return vacancies_list
