@@ -13,7 +13,7 @@ def get_vacancies():
 
     logger.debug(f"Начинаю парсинг вакансий с сайта")
 
-    vacancies_дшые = []
+    vacancies_list = []
 
     month_mapping = {
         "января": "01", "февраля": "02", "марта": "03", "апреля": "04", "мая": "05",
