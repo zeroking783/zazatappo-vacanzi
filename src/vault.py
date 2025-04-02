@@ -60,6 +60,8 @@ def get_database_secrets(path, mount_point, client):
     database_secrets["host"] = read_secret_result["data"]["data"]["host"]
     database_secrets["port"] = read_secret_result["data"]["data"]["port"]
 
+    logger.debug(f"Данные для подключения к базе данных успешно получены")
+
     return database_secrets
 
 # print(read_secret_result)
