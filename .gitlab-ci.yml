@@ -1,7 +1,19 @@
 stages:
+  - build
   - deploy
 
 build-job:
+  stage: build
+  image: docker:24.0
+  services:
+    - docker:24.0-dind
+  tags:
+    - home-server
+  script:
+    - echo "BUILD JOB"
+    - ls -la 
+
+deploy-job:
   stage: deploy
   image: docker:24.0
   services:
