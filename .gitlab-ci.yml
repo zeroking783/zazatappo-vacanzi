@@ -28,7 +28,7 @@ deploy-job:
     - echo "DEPLOY zaza"
     - docker pull registry.gitlab.com/zeroking783/zazatappo-vacanzi:latest
     - |
-      while [ -f /tmp/zaza.lock ]; do 
+      while docker exec zaza ls /tmp | grep -q zaza; do
         echo "ПРОИСХОДИТ ПАРСИНГ, ЖДЕМ"
         sleep 10
       done
