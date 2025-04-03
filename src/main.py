@@ -4,6 +4,7 @@ from vault import create_client, get_database_secrets
 from logger import logger
 import schedule
 import time
+import sys
 
 is_running = False
 
@@ -55,7 +56,7 @@ def main():
                 vacancy["sity"],
                 vacancy["description"],
                 vacancy["no_experience"],
-                true
+                True
             ))
             conn.commit()
         except Exception as e:
