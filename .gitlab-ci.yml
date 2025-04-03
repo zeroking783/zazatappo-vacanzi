@@ -38,5 +38,5 @@ deploy-job:
         echo "DELETE ZAZA CONTAINER"
         docker rm -f zaza;
       fi
-    - docker run -d --name zaza -e VAULT_TOKEN=$VAULT_TOKEN --shm-size="2g" registry.gitlab.com/zeroking783/zazatappo-vacanzi:latest
+    - docker run -d --name zaza -e VAULT_TOKEN=$VAULT_TOKEN --shm-size="2g" -p 8000:8000 registry.gitlab.com/zeroking783/zazatappo-vacanzi:latest
 
