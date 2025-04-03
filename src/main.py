@@ -8,10 +8,12 @@ import sys
 from pathlib import Path
 import atexit
 import signal
-from prometheus_client import start_http_server, Counter
+from prometheus_client import start_http_server, Counter, Gauge, Summary
 
 
 parser_runs = Counter("vacancy_parser_runs_total", "Общее количество запусков парсера")
+all_vacancies_gauge = Gauge("vacancy_parser_all_vacancies", "Количество выложенных вакансий на текущий момент времени")
+proces_duration = Summary("vacancy_parser_proces_duration", "Время обработки процесса парсинга (секунды)")
 
 
 lock_path = Path("/tmp/zaza.lock")
@@ -45,8 +47,12 @@ def main():
 
     logger.info("Начинаю новый цикл")
 
+    start_time = time.time()
+
     try:
         vacancies = get_vacancies()
+        count_vacancies = len(vacancies)
+        all_vacancies_gauge.set(count_vacancies)
 
         client = create_client(
             url="https://vault.bakvivas.ru",
@@ -87,14 +93,27 @@ def main():
                 continue
 
         logger.info("Закрываю соединение с БД")
-        cur.close()
-        conn.close()
+        processing_duration.observe(time.time() - start_time)
 
     except Exception as e:
         logger.error(f"Ошибка в main(): {e}")
 
     finally:
+
+        if cur:
+            try:
+                cur.close()
+            except Exception as e:
+                logger.warning(f"Не удалось закрыть cursor: {e}")
+
+        if conn:
+            try:
+                conn.close()
+            except Exception as e:
+                logger.warning(f"Не удалось закрыть соединение с БД: {e}")
+
         cleanup_lock()
+
 
 if __name__ == '__main__':
     logger.info("Запускаю программу")
