@@ -28,6 +28,12 @@ deploy-job:
     - echo "DEPLOY zaza"
     - docker pull registry.gitlab.com/zeroking783/zazatappo-vacanzi:latest
     - |
+      while [ -f /tmp/zaza.lock ]; do 
+        echo "ПРОИСХОДИТ ПАРСИНГ, ЖДЕМ"
+        sleep 10
+      done
+    - echo "ЗАДАЧА ЗАВЕРШЕНА, ДЕПЛОИМ"
+    - |
       if docker ps -a --filter "name=zaza" --format '{{.Names}}' | grep zaza; then
         echo "DELETE ZAZA CONTAINER"
         docker rm -f zaza;
