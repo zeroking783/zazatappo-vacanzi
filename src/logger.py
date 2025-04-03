@@ -5,7 +5,7 @@ from colorama import init, Fore, Style
 init()
 
 logger = logging.getLogger('parse_vacancies')
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 
@@ -24,7 +24,7 @@ class ColoredFormatter(logging.Formatter):
         return f"{color}{message}{Style.RESET_ALL}"
 
 console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.DEBUG)
+console_handler.setLevel(logging.INFO)
 console_handler.setFormatter(ColoredFormatter('%(asctime)s - %(levelname)s - %(message)s'))
 
 log_file = 'app.log'
