@@ -107,6 +107,7 @@ def main():
 
 if __name__ == '__main__':
     logger.info(f"Запускаю программу")
+    main()
     schedule.every(5).minutes.do(main)
 
     while True:
