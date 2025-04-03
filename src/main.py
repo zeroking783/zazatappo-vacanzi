@@ -8,6 +8,11 @@ import sys
 from pathlib import Path
 import atexit
 import signal
+from prometheus_client import start_http_server, Counter
+
+
+purser_runs = Counter("vacancy_parser_runs_total", "Общее количество запусков парсера")
+
 
 lock_path = Path("/tmp/zaza.lock")
 
@@ -30,6 +35,7 @@ signal.signal(signal.SIGINT, handle_exit)
 signal.signal(signal.SIGTERM, handle_exit)
 
 def main():
+    parser_runs.inc()
     try:
         with open(lock_path, 'x'):
             logger.debug("Создан lock-файл")
@@ -92,6 +98,13 @@ def main():
 
 if __name__ == '__main__':
     logger.info("Запускаю программу")
+    
+    try:
+        logger.info("Запускаю http сервер для логов")
+        start_http_server(8000)
+    except Exception as e:
+        logger.error(f"Ошибка запуска http сервера: {e}")
+
     main()
     schedule.every(5).minutes.do(main)
 
