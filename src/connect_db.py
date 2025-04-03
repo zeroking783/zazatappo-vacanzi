@@ -14,14 +14,14 @@ def connect_database(database_secrets):
         )
     except Exception as e:
         logger.error(f"Безуспешное подключение к базе данных: {e}")
-        sys.exit(1)
+        continue
 
     try:
         logger.debug(f"Создаю объект база данных cursor")
         cur = conn.cursor()
     except Exception as e:
         logger.error(f"Ошибка создания объекта cursor: {e}")
-        sys.exit(1)
+        continue
 
     logger.debug(f"Объекты для подключения к базе данных успешно созданы")
 

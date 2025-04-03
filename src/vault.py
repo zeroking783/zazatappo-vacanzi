@@ -30,7 +30,7 @@ def create_client(url, token_name, verify_path):
         )
     except Exception as e:
         logger.error(f"Ошибка подключения к vault: {e}")
-        sys.exit(1)
+        continue
 
     logger.debug(f"Проверка подключения к пользователю vault: {client.is_authenticated()}")
     return client 
@@ -52,7 +52,7 @@ def get_database_secrets(path, mount_point, client):
         )
     except Exception as e:
         logger.error(f"Ошибка получения данных по пути {path} для подключения к базе данных: {e}")
-        sys.exit(1)
+        continue
 
     database_secrets["dbname"] = read_secret_result["data"]["data"]["dbname"]
     database_secrets["user"] = read_secret_result["data"]["data"]["user"]
