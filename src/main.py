@@ -5,11 +5,15 @@ from logger import logger
 import schedule
 import time
 import sys
+from pathlib import Path
+
 
 is_running = False
 
 def main():
     global is_running
+
+    lock = Path("/tmp/zaza.lock")
 
     if is_running:
         logger.warning(f"Прошлый запуск не завершен, пропускаю текущий цикл")
@@ -19,6 +23,12 @@ def main():
     is_running = True
 
     logger.info(f"Начинаю новый цикл")
+
+    try:
+        logger.debug(f"Создаю файл-блокировщик")
+        lock.touch()
+    except FileExistsError:
+        logger.warning(f"Файл-блокировщик уже существует")
 
     vacancies = get_vacancies()
 
@@ -104,9 +114,16 @@ def main():
     except Exception as e:
         logger.error(f"Ошибка закрытия cur и conn: {e}")
 
+    try:
+        logger.debug(f"Удаляю файл-блокировщик")
+        lock.unlink()
+    except FileNotFoundError:
+        logger.warning(f"Файла блокировщика не было обнаружено")
+
     is_running = False
 
 if __name__ == '__main__':
+    
     logger.info(f"Запускаю программу")
     main()
     schedule.every(5).minutes.do(main)
