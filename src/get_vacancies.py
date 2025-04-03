@@ -29,7 +29,6 @@ def get_vacancies():
         chrome_options.add_argument("--disable-dev-shm-usage")
     except Exception as e:
         logger.error(f"Ошибка создания объекта FirefoxOptions: {e}")
-        continue
     
     try:
         logger.debug(f"Запускаю браузер")
@@ -37,14 +36,12 @@ def get_vacancies():
         driver = webdriver.Chrome(service=service, options=chrome_options)
     except Exception as e:
         logger.error(f"Ошибка запуска браузера: {e}")
-        continue
 
     try:
         logger.debug(f"Получаю страницу")
         driver.get("https://rabota.sber.ru/search/?query=DevOps")
     except Exception as e:
         logger.error(f"Ошибка получения страницы: {e}")
-        continue
 
     scroll_pause_time = 2
     max_retries = 5
@@ -75,15 +72,12 @@ def get_vacancies():
             last_height = new_height
     except Exception as e:
         logger.error(f"Ошибка при пролистывании сайта до самого конца: {e}")
-        continue
-
 
     try:
         logger.debug(f"Получаю все элементы с вакансиями")
         vacancies = driver.find_elements(By.XPATH, "//div[contains(@class, 'styled__Card-sc-192d1yv-1 fmUtEX')]")
     except Exception as e:
         logger.error(f"Ошибка получения всех вакансий: {e}")
-        continue
 
 
     for vacancy in vacancies:
@@ -104,7 +98,6 @@ def get_vacancies():
                 vacancy_dict["name"] = name
         except Exception as e:
             logger.error(f"Ошибка с парсингом имени вакансии: {e}")
-            continue
 
         try:
             subdivision = vacancy.find_elements(By.XPATH, ".//div[contains(@class, 'Text-sc-36c35j-0 bYzNBd')]")[1].text
@@ -112,7 +105,6 @@ def get_vacancies():
                 vacancy_dict["subdivision"] = subdivision
         except Exception as e:
             logger.error(f"Ошибка с парсингом подразделения: {e}")
-            continue
         
         try:
             date_pub = vacancy.find_element(By.XPATH, ".//div[contains(@class, 'Text-sc-36c35j-0 cMyOwV')]").text
@@ -124,7 +116,6 @@ def get_vacancies():
                 vacancy_dict["date_pub"] = date_pub
         except Exception as e:
             logger.error(f"Ошибка с парсингом даты публикации вакансии: {e}")
-            continue
 
         try:        
             sity = vacancy.find_elements(By.XPATH, ".//div[contains(@class, 'Text-sc-36c35j-0 bYzNBd')]")[0].text
@@ -132,7 +123,6 @@ def get_vacancies():
                 vacancy_dict["sity"] = sity
         except Exception as e:
             logger.error(f"Ошибка с парсингом города работы: {e}")
-            continue
 
         try:
             description = vacancy.find_element(By.XPATH, ".//div[contains(@class, 'styled__IntroContainer-sc-192d1yv-11 gjoQSZ')]").text
@@ -140,7 +130,6 @@ def get_vacancies():
                 vacancy_dict["description"] = description
         except Exception as e:
             logger.error(f"Ошибка с парсингом описания: {e}")
-            continue
 
         try:    
             experience = vacancy.find_element(By.XPATH, ".//div[contains(@class, 'styled__Chip-sc-1czfvi7-0 styled__ChipBlock-sc-192d1yv-9 gaZFxD')]").text
@@ -150,7 +139,6 @@ def get_vacancies():
             vacancy_dict["no_experience"] = False
         except Exception as e:
             logger.error(f"Ошибка с парсингом необходимости опыта: {e}")
-            continue
         
         try:
             link = vacancy.find_element(By.XPATH, ".//a").get_attribute("href")
@@ -160,7 +148,6 @@ def get_vacancies():
                 vacancy_dict["link_num"] = link
         except Exception as e:
             logger.error(f"Ошибка с парсингом ссылки вакансии: {e}")
-            continue
 
         vacancies_list.append(vacancy_dict)
 
@@ -169,7 +156,6 @@ def get_vacancies():
         driver.quit()
     except Exception as e:
         logger.error(f"Ошибка закрытия браузера")
-        continue
 
     logger.debug(f"Найдено {len(vacancies_list)} вакансий")
     logger.debug(f"Вакансии с сайта спаршены успешно")
