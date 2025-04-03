@@ -28,56 +28,73 @@ def main():
     conn, cur = connect_database(database_secrets)
 
     query_insert = (
-        "INSERT INTO vacancies (id, link_num, name, subdivision, date_pub, sity, description, no_experience) "
-        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+        "INSERT INTO vacancies (id, link_num, name, subdivision, date_pub, sity, description, no_experience, actual) "
+        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
     )
 
     for vacancy in vacancies:
         # print("========================")
         # print(vacancy)
 
+        # try:
+        #     cur.execute("SELECT COUNT(*) FROM vacancies WHERE link_num = %s", (vacancy["link_num"],))
+        # except Exception as e:
+        #     logger.error(f"Не удалось выполнить запрос в базу данных: {e}")
+        #     sys.exit(1)
+
+        # count = cur.fetchone()[0]
+
+        # if count == 0:
         try:
-            cur.execute("SELECT COUNT(*) FROM vacancies WHERE link_num = %s", (vacancy["link_num"],))
+            cur.execute(query_insert, (
+                str(vacancy["id"]),
+                vacancy["link_num"],
+                vacancy["name"],
+                vacancy["subdivision"],
+                vacancy["date_pub"],
+                vacancy["sity"],
+                vacancy["description"],
+                vacancy["no_experience"],
+                true
+            ))
+            conn.commit()
         except Exception as e:
-            logger.error(f"Не удалось выполнить запрос в базу данных: {e}")
+            logger.error(f"Не удалось выполнить запрос в базу данных")
             sys.exit(1)
+        # else:
+        #     try:
+        #         cur.execute("SELECT id FROM vacancies WHERE link_num = %s AND actual = TRUE")
+        #         id_vacancy_update = cur.fetchone()[0]
 
-        count = cur.fetchone()[0]
-
-        if count == 0:
-            try:
-                cur.execute(query_insert, (
-                    str(vacancy["id"]),
-                    vacancy["link_num"],
-                    vacancy["name"],
-                    vacancy["subdivision"],
-                    vacancy["date_pub"],
-                    vacancy["sity"],
-                    vacancy["description"],
-                    vacancy["no_experience"]
-                ))
-                conn.commit()
-            except Exception as e:
-                logger.error(f"Не удалось выполнить запрос в базу данных")
-                sys.exit(1)
-        else:
-            try:
-                cur.execute("SELECT id, name, subdivision, date_pub, link_num FROM vacancies WHERE link_num = %s", (vacancy["link_num"],))
-                results = cur.fetchall()
-                if results:
-                    for row in results:
-                        vacancy_id, name, subdivision, date_pub, link_num = row
-                        name = name.strip()
-                        date_pub = str(date_pub)
-                        link_num = str(link_num)
-                        subdivision = subdivision.strip()
-                        if vacancy["name"] != name or vacancy["subdivision"] != subdivision or vacancy["date_pub"] != date_pub:
-                            logger.debug(f"Разные вакансии с одной ссылкой")
-                            logger.debug(f"Вакансия в базе данных: {vacancy_id}, {name}, {subdivision}, {date_pub}, {link_num}")
-                            logger.debug(f"Новая вакансия: {vacancy["id"]}, {vacancy["name"]}, {vacancy["subdivision"]}, {vacancy["date_pub"]}, {vacancy["link_num"]}")
-            except Exception as e:
-                logger.error(f"Ошибка получения вакансий с одной ссылкой")
-                sys.exit(1)
+        #         cur.execute("UPDATE vacancies SET actual = %s WHERE id = %s", (false, id_vacancy_update))
+        #         cur.execute(query_insert, (
+        #             str(vacancy["id"]),
+        #             vacancy["link_num"],
+        #             vacancy["name"],
+        #             vacancy["subdivision"],
+        #             vacancy["date_pub"],
+        #             vacancy["sity"],
+        #             vacancy["description"],
+        #             vacancy["no_experience"],
+        #             true
+        #         ))
+        #         conn.commit()
+        #         cur.execute("SELECT id, name, subdivision, date_pub, link_num FROM vacancies WHERE link_num = %s", (vacancy["link_num"],))
+        #         results = cur.fetchall()
+        #         if results:
+        #             for row in results:
+        #                 vacancy_id, name, subdivision, date_pub, link_num = row
+        #                 name = name.strip()
+        #                 date_pub = str(date_pub)
+        #                 link_num = str(link_num)
+        #                 subdivision = subdivision.strip()
+        #                 if vacancy["name"] != name or vacancy["subdivision"] != subdivision or vacancy["date_pub"] != date_pub:
+        #                     logger.debug(f"Разные вакансии с одной ссылкой")
+        #                     logger.debug(f"Вакансия в базе данных: {vacancy_id}, {name}, {subdivision}, {date_pub}, {link_num}")
+        #                     logger.debug(f"Новая вакансия: {vacancy["id"]}, {vacancy["name"]}, {vacancy["subdivision"]}, {vacancy["date_pub"]}, {vacancy["link_num"]}")
+        #     except Exception as e:
+        #         logger.error(f"Ошибка получения вакансий с одной ссылкой")
+        #         sys.exit(1)
 
     try:
         logger.info(f"Закрываю cur и conn")
