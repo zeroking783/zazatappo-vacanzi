@@ -32,7 +32,7 @@ signal.signal(signal.SIGTERM, handle_exit)
 def main():
     try:
         with open(lock_path, 'x'):
-            logger.debug("Создан файл-блокировщик")
+            logger.debug("Создан lock-файл")
     except FileExistsError:
         logger.warning("Прошлый запуск ещё выполняется — пропускаю цикл")
         return
