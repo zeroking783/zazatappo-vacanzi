@@ -1,6 +1,6 @@
 CREATE TABLE vacancies (
     id UUID PRIMARY KEY,
-    link_num INT UNIQUE,
+    link_num INT,
     name CHAR(255),
     subdivision CHAR(255),
     date_pab DATE DEFAULT CURRENT_DATE,
