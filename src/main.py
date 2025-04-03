@@ -11,7 +11,7 @@ import signal
 from prometheus_client import start_http_server, Counter
 
 
-purser_runs = Counter("vacancy_parser_runs_total", "Общее количество запусков парсера")
+parser_runs = Counter("vacancy_parser_runs_total", "Общее количество запусков парсера")
 
 
 lock_path = Path("/tmp/zaza.lock")
