@@ -4,3 +4,5 @@ src/__pycache__
 src/app.log
 parse.html
 token 
+repomix.config.json
+repo
