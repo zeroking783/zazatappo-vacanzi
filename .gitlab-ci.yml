@@ -27,13 +27,7 @@ deploy-job:
   script:
     - echo "DEPLOY zaza"
     - docker-compose pull 
-    - if ! docker ps -a --format '{{.Names}}' | grep -qE '^(kafka|zookeeper)$'; then
-        echo "KAFKA и ZOOKEEPER НЕ НАЙДЕНЫ, ПЕРЕЗАПУСКАЮ ВСЕ СЕРВИСЫ"
-        docker-compose up -d
-      else
-        echo "ПЕРЕЗАПУСКАЮ ТОЛЬКО ZAZA-PARSER"
-        docker-compose up -d zaza-parser
-      fi
+    - if ! docker ps -a --format '{{.Names}}' | grep -qE '^(kafka|zookeeper)$'; then echo "KAFKA и ZOOKEEPER НЕ НАЙДЕНЫ, ПЕРЕЗАПУСКАЮ ВСЕ СЕРВИСЫ"; docker-compose up -d; else echo "ПЕРЕЗАПУСКАЮ ТОЛЬКО ZAZA-PARSER"; docker-compose up -d zaza-parser; fi
     # - docker pull registry.gitlab.com/zeroking783/zazatappo-vacanzi:latest
     # - |
     #   while docker exec zaza ls /tmp | grep -q zaza; do
