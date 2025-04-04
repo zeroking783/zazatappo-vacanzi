@@ -93,7 +93,7 @@ def main():
                 continue
 
         logger.info("Закрываю соединение с БД")
-        processing_duration.observe(time.time() - start_time)
+        proces_duration.observe(time.time() - start_time)
 
     except Exception as e:
         logger.error(f"Ошибка в main(): {e}")
