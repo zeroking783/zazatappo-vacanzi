@@ -4,6 +4,7 @@ from vault import create_client, get_database_secrets
 from logger import logger
 import schedule
 import time
+import datetime
 import sys
 from pathlib import Path
 import atexit
@@ -14,6 +15,7 @@ from prometheus_client import start_http_server, Counter, Gauge, Summary
 parser_runs = Counter("vacancy_parser_runs_total", "Общее количество запусков парсера")
 all_vacancies_gauge = Gauge("vacancy_parser_all_vacancies", "Количество выложенных вакансий на текущий момент времени")
 proces_duration = Summary("vacancy_parser_proces_duration", "Время обработки процесса парсинга (секунды)")
+last_send_vacancies_data_base = Gauge("vacancy_parser_last_send_vacancies_data_base", "Последнее отправление спаршенных вакансий в базу данных")
 
 
 lock_path = Path("/tmp/zaza.lock")
@@ -87,6 +89,8 @@ def main():
                     True
                 ))
                 conn.commit()
+                timestamp_seconds = int(datetime.datetime.now().timestamp())
+                last_send_vacancies_data_base.set(timestamp_seconds)
             except Exception as e:
                 logger.error(f"Ошибка вставки в БД: {e}")
                 conn.rollback()
