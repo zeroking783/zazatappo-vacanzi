@@ -38,6 +38,22 @@ def handle_exit(signum, frame):
 signal.signal(signal.SIGINT, handle_exit)
 signal.signal(signal.SIGTERM, handle_exit)
 
+def update_inactive_vacancies(conn, cur, current_vacancies):
+    query_get_active_vacancies = "SELECT link_num FROM vacancies WHERE actual = TRUE"
+    cur.execute(query_get_active_vacancies)
+    active_vacancies = {row[0] for row in cur.fetchall()}
+
+    current_vacancies_link_nums = {vacancy["link_num"] for vacancy in current_vacancies}
+
+    inactive_vacancies = active_vacancies - current_vacancies_link_nums
+
+    if inactive_vacancies:
+        query_update_inactive = "UPDATE vacancies SET actual = FALSE WHERE link_num IN %s"
+        cur.execute(query_update_inactive, (tuple(inactive_vacancies),))
+        conn.commit()
+        logger.info(f"Обновлено {len(inactive_vacancies)} вакансий на 'actual = false'")
+
+
 def main():
     parser_runs.inc()
     try:
@@ -95,6 +111,8 @@ def main():
                 logger.error(f"Ошибка вставки в БД: {e}")
                 conn.rollback()
                 continue
+
+        update_inactive_vacancies(conn, cur, vacancies)
 
         logger.info("Закрываю соединение с БД")
         proces_duration.observe(time.time() - start_time)
