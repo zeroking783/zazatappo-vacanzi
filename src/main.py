@@ -42,22 +42,26 @@ signal.signal(signal.SIGTERM, handle_exit)
 
 def update_inactive_vacancies(conn, cur, current_vacancies):
     query_get_active_vacancies = "SELECT link_num FROM vacancies WHERE actual = TRUE"
-    cur.execute(query_get_active_vacancies)
+    try:
+        logger.debug(f"Получаю список активных вакансий из базы данных")
+        cur.execute(query_get_active_vacancies)
+    except Exception as e:
+        logger.warning(f"Ошибка получения списка активных вакансий из базы данных: {e}")
     active_vacancies = {str(row[0]) for row in cur.fetchall()}
-    logger.info(f"ACTIVE_VACANCIES: {active_vacancies}")
 
     current_vacancies_link_nums = {str(vacancy["link_num"]) for vacancy in current_vacancies}
-    logger.info(f"CURRENT VACANCIES LINK NUMS: {current_vacancies_link_nums}")
-
-    query_update_inactive = "UPDATE vacancies SET actual = FALSE WHERE link_num IN %s"
 
     inactive_vacancies = [i for i in active_vacancies if i not in current_vacancies_link_nums]
 
     if inactive_vacancies:
         query_update_inactive = "UPDATE vacancies SET actual = FALSE WHERE link_num IN %s"
-        cur.execute(query_update_inactive, (tuple(inactive_vacancies),))
-        conn.commit()
-        logger.info(f"Обновлено {len(inactive_vacancies)} вакансий на 'actual = false'")
+        try:
+            logger.debug(f"Обновляю неактуальные вакансии в базе данных")
+            cur.execute(query_update_inactive, (tuple(inactive_vacancies),))
+            conn.commit()
+        except Exception as e:
+            logger.warning(f"Ошибка обновления неактуальных вакансий в базе данных: {e}")
+        logger.info(f"Обновлено {len(inactive_vacancies)} неактуальных вакансий на 'actual = false'")
 
 
 def load_fake_vacancies(csv_file):
@@ -68,6 +72,7 @@ def load_fake_vacancies(csv_file):
         return fake_vacancies
     
     with open(csv_file, newline='', encoding='utf-8') as csvfile:
+        logger.debug(f"Читаю файл с фейковыми вакансиями")
         reader = csv.DictReader(csvfile)
         for row in reader:
             fake_vacancies.append({
@@ -85,7 +90,7 @@ def load_fake_vacancies(csv_file):
 
 
 def main():
-    parser_runs.inc()
+
     try:
         with open(lock_path, 'x'):
             logger.debug("Создан lock-файл")
@@ -94,14 +99,15 @@ def main():
         return
 
     logger.info("Начинаю новый цикл")
+    parser_runs.inc()
     now_running.set(1)
 
     start_time = time.time()
 
     try:
-        # vacancies = get_vacancies()
-        # count_vacancies = len(vacancies)
-        # all_vacancies_gauge.set(count_vacancies)
+        vacancies = get_vacancies()
+        count_vacancies = len(vacancies)
+        all_vacancies_gauge.set(count_vacancies)
 
         client = create_client(
             url="https://vault.bakvivas.ru",
@@ -122,9 +128,9 @@ def main():
             "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
         )
 
-        fake_vacancies = load_fake_vacancies("fake_vacancies.csv")
+        # fake_vacancies = load_fake_vacancies("fake_vacancies.csv")
 
-        vacancies = fake_vacancies
+        # vacancies = fake_vacancies
 
         for vacancy in vacancies:
             try:
