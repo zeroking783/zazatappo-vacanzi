@@ -14,6 +14,7 @@ from prometheus_client import start_http_server, Counter, Gauge, Summary
 
 parser_runs = Counter("vacancy_parser_runs_total", "Общее количество запусков парсера")
 all_vacancies_gauge = Gauge("vacancy_parser_all_vacancies", "Количество выложенных вакансий на текущий момент времени")
+now_running = Gauge("vacancy_parser_now_running", "В данный момент времени происходит процесс парсинга и сохранение")
 proces_duration = Summary("vacancy_parser_proces_duration", "Время обработки процесса парсинга (секунды)")
 last_send_vacancies_data_base = Gauge("vacancy_parser_last_send_vacancies_data_base", "Последнее отправление спаршенных вакансий в базу данных")
 
@@ -68,6 +69,7 @@ def main():
         return
 
     logger.info("Начинаю новый цикл")
+    now_running.set(1)
 
     start_time = time.time()
 
@@ -139,6 +141,8 @@ def main():
                 logger.warning(f"Не удалось закрыть соединение с БД: {e}")
 
         cleanup_lock()
+        
+        now_running.set(0)
 
 
 if __name__ == '__main__':
