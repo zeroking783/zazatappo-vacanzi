@@ -27,7 +27,7 @@ console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.INFO)
 console_handler.setFormatter(ColoredFormatter('%(asctime)s - %(levelname)s - %(message)s'))
 
-log_file = 'app.log'
+log_file = '/var/log/zaza/app.log'
 file_handler = logging.FileHandler(log_file)
 file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(formatter)
