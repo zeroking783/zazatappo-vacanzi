@@ -47,8 +47,9 @@ def update_inactive_vacancies(conn, cur, current_vacancies):
     current_vacancies_link_nums = {vacancy["link_num"] for vacancy in current_vacancies}
     logger.info(f"CURRENT VACANCIES LINK NUMS: {current_vacancies_link_nums}")
 
-    inactive_vacancies = active_vacancies - current_vacancies_link_nums
-    logger.info(f"INACTIVE VACANCIES: {inactive_vacancies}")
+    query_update_inactive = "UPDATE vacancies SET actual = FALSE WHERE link_num IN %s"
+
+    inactive_vacancies = [i for i in active_vacancies if i not in current_vacancies_link_nums]
 
     if inactive_vacancies:
         query_update_inactive = "UPDATE vacancies SET actual = FALSE WHERE link_num IN %s"
