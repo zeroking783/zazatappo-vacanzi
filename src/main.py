@@ -41,10 +41,10 @@ signal.signal(signal.SIGTERM, handle_exit)
 def update_inactive_vacancies(conn, cur, current_vacancies):
     query_get_active_vacancies = "SELECT link_num FROM vacancies WHERE actual = TRUE"
     cur.execute(query_get_active_vacancies)
-    active_vacancies = {row[0] for row in cur.fetchall()}
+    active_vacancies = {str(row[0]) for row in cur.fetchall()}
     logger.info(f"ACTIVE_VACANCIES: {active_vacancies}")
 
-    current_vacancies_link_nums = {vacancy["link_num"] for vacancy in current_vacancies}
+    current_vacancies_link_nums = {str(vacancy["link_num"]) for vacancy in current_vacancies}
     logger.info(f"CURRENT VACANCIES LINK NUMS: {current_vacancies_link_nums}")
 
     query_update_inactive = "UPDATE vacancies SET actual = FALSE WHERE link_num IN %s"
