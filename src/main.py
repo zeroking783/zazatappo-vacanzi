@@ -99,9 +99,9 @@ def main():
     start_time = time.time()
 
     try:
-        vacancies = get_vacancies()
-        count_vacancies = len(vacancies)
-        all_vacancies_gauge.set(count_vacancies)
+        # vacancies = get_vacancies()
+        # count_vacancies = len(vacancies)
+        # all_vacancies_gauge.set(count_vacancies)
 
         client = create_client(
             url="https://vault.bakvivas.ru",
@@ -175,6 +175,7 @@ def main():
 
 
 if __name__ == '__main__':
+
     logger.info("Запускаю программу")
     
     try:
