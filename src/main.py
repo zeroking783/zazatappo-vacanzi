@@ -10,6 +10,7 @@ from pathlib import Path
 import atexit
 import signal
 from prometheus_client import start_http_server, Counter, Gauge, Summary
+import csv 
 
 
 parser_runs = Counter("vacancy_parser_runs_total", "Общее количество запусков парсера")
@@ -59,6 +60,30 @@ def update_inactive_vacancies(conn, cur, current_vacancies):
         logger.info(f"Обновлено {len(inactive_vacancies)} вакансий на 'actual = false'")
 
 
+def load_fake_vacancies(csv_file):
+    fake_vacancies = []
+
+    if not Path(csv_file).exists():
+        logger.warning(f"Файл {csv_file} с фейковыми вакансиями не найден!")
+        return fake_vacancies
+    
+    with open(csv_file, newline='', encoding='utf-8') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            fake_vacancies.append({
+                "id": row['id'],
+                "link_num": row['link_num'],
+                "name": row['name'],
+                "subdivision": row['subdivision'],
+                "date_pub": row['date_pub'],
+                "sity": row['sity'],
+                "description": row['description'],
+                "no_experience": row['no_experience'].lower() == 'true'
+            })
+    
+    return fake_vacancies
+
+
 def main():
     parser_runs.inc()
     try:
@@ -96,6 +121,10 @@ def main():
             "INSERT INTO vacancies (id, link_num, name, subdivision, date_pub, sity, description, no_experience, actual) "
             "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
         )
+
+        fake_vacancies = load_fake_vacancies("fake_vacancies.csv")
+
+        vacancies = vacancies + fake_vacancies
 
         for vacancy in vacancies:
             try:
