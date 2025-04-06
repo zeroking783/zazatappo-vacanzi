@@ -40,5 +40,8 @@ deploy-job:
         echo "DELETE ZAZA CONTAINER"
         docker rm -f zaza;
       fi
+    - ls
+    - rm -f fake_vacancies.csv
+    - ls
     # - docker run -d --name zaza --restart unless-stopped -e VAULT_TOKEN=$VAULT_TOKEN --shm-size="2g" -p 8000:8000 registry.gitlab.com/zeroking783/zazatappo-vacanzi:latest
-    - docker run -d --name zaza --restart unless-stopped -e VAULT_TOKEN=$VAULT_TOKEN -v $(pwd)/fake_vacancies.csv:/app/zazatappo-vacanzi/fake_vacancies.csv --shm-size="2g" -p 8000:8000 registry.gitlab.com/zeroking783/zazatappo-vacanzi:latest
+    - docker run -d --name zaza --restart unless-stopped -e VAULT_TOKEN=$VAULT_TOKEN -v /home/bakvivas/auto-cv/fake_vacancies.csv:/app/zazatappo-vacanzi/fake_vacancies.csv --shm-size="2g" -p 8000:8000 registry.gitlab.com/zeroking783/zazatappo-vacanzi:latest
