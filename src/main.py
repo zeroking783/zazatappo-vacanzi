@@ -124,7 +124,7 @@ def main():
 
         fake_vacancies = load_fake_vacancies("fake_vacancies.csv")
 
-        vacancies = vacancies + fake_vacancies
+        vacancies = fake_vacancies
 
         for vacancy in vacancies:
             try:
